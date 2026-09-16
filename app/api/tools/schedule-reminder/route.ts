@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const body = await req.json();
     const reminderType = body.reminder_type || "medication";
     const title = body.title || "Health Reminder";
@@ -13,11 +18,11 @@ export async function POST(req: Request) {
     const reminderId = `rem-${Date.now()}`;
 
     const stmt = db.prepare(`
-      INSERT INTO reminders (id, reminder_type, title, frequency, time, active)
-      VALUES (?, ?, ?, ?, ?, 1)
+      INSERT INTO reminders (id, reminder_type, title, frequency, time, active, owner_id)
+      VALUES (?, ?, ?, ?, ?, 1, ?)
     `);
 
-    stmt.run(reminderId, reminderType, title, frequency, time);
+    stmt.run(reminderId, reminderType, title, frequency, time, user.id);
 
     return NextResponse.json({
       success: true,

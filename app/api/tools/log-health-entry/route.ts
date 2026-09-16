@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const body = await req.json();
     const symptoms: string[] = body.symptoms || [];
     const severity = body.severity || "mild";
@@ -15,11 +20,11 @@ export async function POST(req: Request) {
     const timestamp = new Date().toISOString();
 
     const stmt = db.prepare(`
-      INSERT INTO journal_entries (id, timestamp, symptoms, severity, mood, notes, recommended_action)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO journal_entries (id, timestamp, symptoms, severity, mood, notes, recommended_action, owner_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    stmt.run(entryId, timestamp, JSON.stringify(symptoms), severity, mood, notes, recommendedAction);
+    stmt.run(entryId, timestamp, JSON.stringify(symptoms), severity, mood, notes, recommendedAction, user.id);
 
     return NextResponse.json({
       success: true,

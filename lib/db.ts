@@ -16,8 +16,17 @@ export function getDb() {
     const dbPath = path.join(dbDir, "medsync.db");
     db = new Database(dbPath);
   } catch (e) {
-    // Fallback to in-memory SQLite if file system is restricted
-    db = new Database(":memory:");
+    // Fallback to in-memory SQLite ONLY when explicitly enabled. Otherwise fail
+    // visibly: silently swapping persistent storage for a throwaway database
+    // can destroy a user's data when disk access is broken.
+    if (process.env.MEDSYNC_EPHEMERAL_DB === "1") {
+      db = new Database(":memory:");
+    } else {
+      console.error("Failed to open SQLite database file:", e);
+      throw new Error(
+        "Failed to open SQLite database. Set MEDSYNC_EPHEMERAL_DB=1 to allow an in-memory fallback for demo use."
+      );
+    }
   }
 
   // Initialize tables and seed data; only publish the shared instance
@@ -52,7 +61,31 @@ export function getDb() {
         time TEXT NOT NULL,
         active INTEGER NOT NULL DEFAULT 1
       );
+
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS sessions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        token_hash TEXT NOT NULL UNIQUE,
+        expires_at TEXT NOT NULL
+      );
     `);
+
+    // Migrate existing databases (created before per-user ownership) by adding
+    // the owner_id column when it is missing. Existing rows keep NULL owner and
+    // therefore stay invisible to authenticated users.
+    for (const table of ["journal_entries", "medications", "reminders"]) {
+      const columns: any[] = db.prepare(`PRAGMA table_info(${table})`).all();
+      if (!columns.some((c) => c.name === "owner_id")) {
+        db.exec(`ALTER TABLE ${table} ADD COLUMN owner_id TEXT`);
+      }
+    }
 
     db.transaction(() => {
       // Seed sample data if empty

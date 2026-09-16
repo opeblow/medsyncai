@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
+import { getSessionUser } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const user = getSessionUser(req);
+  if (!user) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const apiKey = process.env.ASSEMBLY_AI_API_KEY || process.env.ASSEMBLE_AI_API_KEY;
 
   if (!apiKey) {

@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const db = getDb();
-    const rows = db.prepare("SELECT * FROM journal_entries ORDER BY timestamp DESC").all();
+    const rows = db
+      .prepare("SELECT * FROM journal_entries WHERE owner_id = ? ORDER BY timestamp DESC")
+      .all(user.id);
     const parsed = rows.map((r: any) => ({
       id: r.id,
       timestamp: r.timestamp,
@@ -22,13 +29,17 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const body = await req.json();
     const db = getDb();
     const id = `entry-${Date.now()}`;
     const timestamp = new Date().toISOString();
     const stmt = db.prepare(`
-      INSERT INTO journal_entries (id, timestamp, symptoms, severity, mood, notes, recommended_action)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO journal_entries (id, timestamp, symptoms, severity, mood, notes, recommended_action, owner_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
     stmt.run(
       id,
@@ -37,7 +48,8 @@ export async function POST(req: Request) {
       body.severity || "mild",
       body.mood || "okay",
       body.notes || "",
-      body.recommended_action || "Manual entry."
+      body.recommended_action || "Manual entry.",
+      user.id
     );
     return NextResponse.json({ success: true, id });
   } catch (err: any) {

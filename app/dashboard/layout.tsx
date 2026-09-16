@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Mic,
@@ -13,8 +14,8 @@ import {
   Phone,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -86,7 +87,34 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/me")
+      .then((res) => {
+        if (!cancelled) {
+          setAuthChecked(true);
+          if (res.status === 401) router.replace("/login");
+        }
+      })
+      .catch(() => !cancelled && setAuthChecked(true));
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      router.replace("/login");
+    }
+  }
+
+  if (!authChecked) return null;
 
   const pageTitle =
     navItems.find((n) => n.href === pathname)?.label || "Dashboard";
@@ -144,6 +172,14 @@ export default function DashboardLayout({
             <span className="text-xs text-gray-500 font-medium hidden sm:inline">
               AI Companion
             </span>
+            <button
+              onClick={handleLogout}
+              className="ml-2 flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:text-red-600"
+              title="Sign out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign out</span>
+            </button>
           </div>
         </header>
 

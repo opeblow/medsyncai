@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const db = getDb();
-    const rows = db.prepare("SELECT * FROM reminders ORDER BY active DESC, time ASC").all();
+    const rows = db
+      .prepare("SELECT * FROM reminders WHERE owner_id = ? ORDER BY active DESC, time ASC")
+      .all(user.id);
     return NextResponse.json(rows);
   } catch (err: any) {
     return NextResponse.json({ error: "Failed to fetch reminders" }, { status: 500 });
@@ -13,14 +20,25 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const body = await req.json();
     const db = getDb();
     const id = `rem-${Date.now()}`;
     const stmt = db.prepare(`
-      INSERT INTO reminders (id, reminder_type, title, frequency, time, active)
-      VALUES (?, ?, ?, ?, ?, 1)
+      INSERT INTO reminders (id, reminder_type, title, frequency, time, active, owner_id)
+      VALUES (?, ?, ?, ?, ?, 1, ?)
     `);
-    stmt.run(id, body.reminder_type || "medication", body.title || "Reminder", body.frequency || "daily", body.time || "8:00 AM");
+    stmt.run(
+      id,
+      body.reminder_type || "medication",
+      body.title || "Reminder",
+      body.frequency || "daily",
+      body.time || "8:00 AM",
+      user.id
+    );
     return NextResponse.json({ success: true, id });
   } catch (err: any) {
     return NextResponse.json({ error: "Failed to create reminder" }, { status: 500 });
@@ -29,11 +47,20 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "Missing reminder ID" }, { status: 400 });
     const db = getDb();
-    db.prepare("UPDATE reminders SET active = 0 WHERE id = ?").run(id);
+    const result = db
+      .prepare("UPDATE reminders SET active = 0 WHERE id = ? AND owner_id = ?")
+      .run(id, user.id);
+    if (result.changes === 0) {
+      return NextResponse.json({ error: "Reminder not found" }, { status: 404 });
+    }
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: "Failed to delete reminder" }, { status: 500 });
@@ -42,12 +69,21 @@ export async function DELETE(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
+    const user = getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
     const body = await req.json();
     if (!body.id || typeof body.active !== "boolean") {
       return NextResponse.json({ error: "A reminder ID and active state are required" }, { status: 400 });
     }
     const db = getDb();
-    db.prepare("UPDATE reminders SET active = ? WHERE id = ?").run(body.active ? 1 : 0, body.id);
+    const result = db
+      .prepare("UPDATE reminders SET active = ? WHERE id = ? AND owner_id = ?")
+      .run(body.active ? 1 : 0, body.id, user.id);
+    if (result.changes === 0) {
+      return NextResponse.json({ error: "Reminder not found" }, { status: 404 });
+    }
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to update reminder" }, { status: 500 });
