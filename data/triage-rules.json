@@ -1,0 +1,65 @@
+{
+  "rules": [
+    {
+      "severity": "critical",
+      "label": "Emergency — Call 911 Immediately",
+      "color": "red",
+      "triggers": [
+        "chest pain with shortness of breath",
+        "chest pain radiating to arm, shoulder, or jaw",
+        "difficulty breathing at rest or severe wheezing",
+        "sudden severe headache (worst headache of life)",
+        "confusion, altered consciousness, or fainting",
+        "signs of stroke (face drooping, arm weakness, slurred speech)",
+        "severe allergic reaction (throat tightness, lip swelling, anaphylaxis)",
+        "uncontrolled bleeding or coughing up blood",
+        "suicidal thoughts or self-harm intent"
+      ],
+      "action": "Call 911 immediately or go to the nearest emergency room. Do not wait or drive yourself."
+    },
+    {
+      "severity": "urgent",
+      "label": "See a Doctor Within 24 Hours",
+      "color": "amber",
+      "triggers": [
+        "fever above 103°F (39.4°C) in adults",
+        "persistent vomiting lasting over 24 hours",
+        "severe abdominal pain",
+        "headache lasting more than 3 days",
+        "chest pain that comes and goes with breathing",
+        "blood in urine or dark black stool",
+        "sudden vision changes or severe eye pain",
+        "very high blood pressure reading (above 180/120)"
+      ],
+      "action": "Schedule an urgent medical consultation within 24 hours or visit an Urgent Care clinic. Seek ER care if symptoms worsen."
+    },
+    {
+      "severity": "moderate",
+      "label": "See a Doctor This Week",
+      "color": "amber",
+      "triggers": [
+        "persistent cough lasting more than 2 weeks",
+        "recurring or worsening headaches",
+        "joint pain or joint swelling lasting over a week",
+        "unexplained weight loss or chronic fatigue",
+        "skin rash spreading or suspicious new mole",
+        "mild depression or persistent anxiety affecting daily routines"
+      ],
+      "action": "Schedule an appointment with your primary care provider this week. Keep a log of your symptoms in your MedSync journal."
+    },
+    {
+      "severity": "mild",
+      "label": "Self-Care & Home Monitoring",
+      "color": "green",
+      "triggers": [
+        "common cold symptoms (runny nose, mild sore throat, sneezing)",
+        "mild tension headache responding to OTC remedies",
+        "minor muscle soreness after exercise",
+        "mild seasonal allergy symptoms",
+        "occasional indigestion or heartburn after meals",
+        "short-term stress or occasional sleep difficulty"
+      ],
+      "action": "Rest, stay well hydrated, and consider over-the-counter self-care remedies. Consult a physician if symptoms worsen or persist past 1-2 weeks."
+    }
+  ]
+}
