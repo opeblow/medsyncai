@@ -1,0 +1,345 @@
+{
+  "symptoms": [
+    {
+      "id": "headache",
+      "name": "Headache",
+      "category": "neurological",
+      "follow_up_questions": [
+        "How long have you had this headache?",
+        "Is it throbbing, constant, or sharp?",
+        "Which part of your head hurts?",
+        "Any nausea, sensitivity to light, or vision changes?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Tension headache",
+          "likelihood": "common",
+          "matching_symptoms": ["headache", "neck_stiffness", "stress", "dull_pain"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Migraine",
+          "likelihood": "common",
+          "matching_symptoms": ["headache", "nausea", "light_sensitivity", "throbbing"],
+          "severity": "moderate"
+        },
+        {
+          "condition": "Cluster headache",
+          "likelihood": "less_common",
+          "matching_symptoms": ["headache", "eye_pain", "one_sided", "tearing"],
+          "severity": "moderate"
+        },
+        {
+          "condition": "Hypertensive crisis",
+          "likelihood": "uncommon",
+          "matching_symptoms": ["headache", "high_bp", "dizziness", "chest_tightness"],
+          "severity": "urgent"
+        }
+      ]
+    },
+    {
+      "id": "chest_pain",
+      "name": "Chest pain",
+      "category": "cardiovascular",
+      "emergency_flag": true,
+      "follow_up_questions": [
+        "Where exactly is the pain?",
+        "Does it spread to your arm, jaw, or back?",
+        "Are you short of breath or sweating?",
+        "How long has it been going on?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Angina",
+          "likelihood": "needs_evaluation",
+          "matching_symptoms": ["chest_pain", "shortness_of_breath", "exertion"],
+          "severity": "urgent"
+        },
+        {
+          "condition": "Myocardial Infarction (Heart Attack)",
+          "likelihood": "emergency",
+          "matching_symptoms": ["chest_pain", "arm_pain", "jaw_pain", "sweating", "nausea"],
+          "severity": "critical"
+        },
+        {
+          "condition": "Gastroesophageal Reflux (GERD)",
+          "likelihood": "common",
+          "matching_symptoms": ["chest_pain", "burning", "after_eating", "sour_taste"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Costochondritis",
+          "likelihood": "common",
+          "matching_symptoms": ["chest_pain", "pain_on_pressing", "sharp_pain"],
+          "severity": "mild"
+        }
+      ]
+    },
+    {
+      "id": "shortness_of_breath",
+      "name": "Shortness of breath",
+      "category": "respiratory",
+      "emergency_flag": true,
+      "follow_up_questions": [
+        "Did it come on suddenly or gradually?",
+        "Is it worse when lying down or during exertion?",
+        "Do you have a cough or wheezing?",
+        "Any chest pain or blue color in lips/fingers?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Asthma flare-up",
+          "likelihood": "common",
+          "matching_symptoms": ["shortness_of_breath", "wheezing", "cough"],
+          "severity": "moderate"
+        },
+        {
+          "condition": "Pulmonary Embolism",
+          "likelihood": "emergency",
+          "matching_symptoms": ["shortness_of_breath", "sudden_onset", "chest_pain", "leg_swelling"],
+          "severity": "critical"
+        },
+        {
+          "condition": "Bronchitis",
+          "likelihood": "common",
+          "matching_symptoms": ["shortness_of_breath", "mucus_cough", "fever", "fatigue"],
+          "severity": "moderate"
+        },
+        {
+          "condition": "Anxiety / Panic attack",
+          "likelihood": "common",
+          "matching_symptoms": ["shortness_of_breath", "palpitations", "tingling", "fear"],
+          "severity": "mild"
+        }
+      ]
+    },
+    {
+      "id": "dizziness",
+      "name": "Dizziness / Vertigo",
+      "category": "neurological",
+      "follow_up_questions": [
+        "Does the room feel like it's spinning, or do you feel lightheaded?",
+        "Does it happen when standing up quickly?",
+        "Any weakness, numbness, or difficulty speaking?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Benign Paroxysmal Positional Vertigo (BPPV)",
+          "likelihood": "common",
+          "matching_symptoms": ["dizziness", "spinning", "head_movement"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Orthostatic Hypotension",
+          "likelihood": "common",
+          "matching_symptoms": ["dizziness", "lightheaded", "standing_up"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Transient Ischemic Attack (TIA) / Stroke",
+          "likelihood": "emergency",
+          "matching_symptoms": ["dizziness", "face_droop", "arm_weakness", "slurred_speech"],
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "fever",
+      "name": "Fever",
+      "category": "general",
+      "follow_up_questions": [
+        "What is your current temperature reading?",
+        "Do you have chills, body aches, or a sore throat?",
+        "How many days has the fever lasted?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Viral infection (Flu / Cold)",
+          "likelihood": "common",
+          "matching_symptoms": ["fever", "chills", "body_aches", "fatigue"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Severe bacterial infection",
+          "likelihood": "needs_evaluation",
+          "matching_symptoms": ["fever", "high_temp", "rigors", "confusion"],
+          "severity": "urgent"
+        }
+      ]
+    },
+    {
+      "id": "cough",
+      "name": "Cough",
+      "category": "respiratory",
+      "follow_up_questions": [
+        "Is it a dry cough or producing mucus?",
+        "Are you coughing up any blood?",
+        "How long have you had this cough?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Upper Respiratory Tract Infection",
+          "likelihood": "common",
+          "matching_symptoms": ["cough", "runny_nose", "sore_throat"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Pneumonia",
+          "likelihood": "common",
+          "matching_symptoms": ["cough", "fever", "chest_pain", "shortness_of_breath"],
+          "severity": "urgent"
+        }
+      ]
+    },
+    {
+      "id": "abdominal_pain",
+      "name": "Abdominal pain",
+      "category": "gastrointestinal",
+      "follow_up_questions": [
+        "Which area of your abdomen hurts (upper, lower, right, left)?",
+        "Is the pain severe, cramping, or dull?",
+        "Any fever, vomiting, or changes in bowel habits?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Appendicitis",
+          "likelihood": "emergency",
+          "matching_symptoms": ["abdominal_pain", "lower_right_pain", "fever", "nausea"],
+          "severity": "critical"
+        },
+        {
+          "condition": "Gastritis / Indigestion",
+          "likelihood": "common",
+          "matching_symptoms": ["abdominal_pain", "upper_pain", "bloating", "nausea"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Gallstones / Cholecystitis",
+          "likelihood": "needs_evaluation",
+          "matching_symptoms": ["abdominal_pain", "upper_right_pain", "after_fatty_food"],
+          "severity": "urgent"
+        }
+      ]
+    },
+    {
+      "id": "fatigue",
+      "name": "Fatigue / Low energy",
+      "category": "general",
+      "follow_up_questions": [
+        "How long have you been feeling unusually tired?",
+        "Are you sleeping enough at night?",
+        "Any weight changes, fever, or mood changes?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Anemia",
+          "likelihood": "common",
+          "matching_symptoms": ["fatigue", "pale_skin", "dizziness"],
+          "severity": "moderate"
+        },
+        {
+          "condition": "Hypothyroidism",
+          "likelihood": "common",
+          "matching_symptoms": ["fatigue", "weight_gain", "cold_intolerance"],
+          "severity": "moderate"
+        },
+        {
+          "condition": "Sleep Deprivation",
+          "likelihood": "common",
+          "matching_symptoms": ["fatigue", "poor_sleep", "brain_fog"],
+          "severity": "mild"
+        }
+      ]
+    },
+    {
+      "id": "joint_pain",
+      "name": "Joint pain",
+      "category": "musculoskeletal",
+      "follow_up_questions": [
+        "Which joints are affected?",
+        "Is there swelling, redness, or warmth?",
+        "Is it worse in the morning?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Osteoarthritis",
+          "likelihood": "common",
+          "matching_symptoms": ["joint_pain", "stiffness", "use_pain"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Rheumatoid Arthritis",
+          "likelihood": "common",
+          "matching_symptoms": ["joint_pain", "morning_stiffness", "swelling", "bilateral"],
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "id": "skin_rash",
+      "name": "Skin rash / Itching",
+      "category": "dermatological",
+      "follow_up_questions": [
+        "Where is the rash located?",
+        "Is it raised, scaly, or blistering?",
+        "Did you start any new medications or soaps recently?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Contact Dermatitis",
+          "likelihood": "common",
+          "matching_symptoms": ["skin_rash", "itching", "redness", "localized"],
+          "severity": "mild"
+        },
+        {
+          "condition": "Allergic Drug Reaction",
+          "likelihood": "needs_evaluation",
+          "matching_symptoms": ["skin_rash", "widespread", "new_medication"],
+          "severity": "urgent"
+        }
+      ]
+    },
+    {
+      "id": "anxiety",
+      "name": "Anxiety / Nervousness",
+      "category": "mental_health",
+      "follow_up_questions": [
+        "Are you experiencing racing thoughts or physical tension?",
+        "Does it interfere with your sleep or work?",
+        "Do you have panic symptoms like rapid heart rate?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Generalized Anxiety Disorder",
+          "likelihood": "common",
+          "matching_symptoms": ["anxiety", "worry", "restlessness", "muscle_tension"],
+          "severity": "moderate"
+        },
+        {
+          "condition": "Panic Disorder",
+          "likelihood": "common",
+          "matching_symptoms": ["anxiety", "rapid_heartbeat", "trembling", "sudden_fear"],
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "id": "insomnia",
+      "name": "Trouble sleeping / Insomnia",
+      "category": "mental_health",
+      "follow_up_questions": [
+        "Do you have trouble falling asleep or staying asleep?",
+        "How long has this sleep issue persisted?",
+        "Do you consume caffeine or use screens before bed?"
+      ],
+      "possible_conditions": [
+        {
+          "condition": "Acute Insomnia",
+          "likelihood": "common",
+          "matching_symptoms": ["insomnia", "stress", "daytime_sleepiness"],
+          "severity": "mild"
+        }
+      ]
+    }
+  ]
+}
