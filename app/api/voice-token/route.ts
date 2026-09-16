@@ -12,7 +12,7 @@ export async function GET() {
 
   try {
     const response = await fetch(
-      "https://agents.assemblyai.com/v1/token?expires_in_seconds=300&max_session_duration_seconds=8640",
+      "https://agents.assemblyai.com/v1/token?expires_in_seconds=300&max_session_duration_seconds=600",
       {
         method: "GET",
         headers: {
@@ -23,9 +23,10 @@ export async function GET() {
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("AssemblyAI token minting failed:", response.status, errorText);
       return NextResponse.json(
-        { error: `Token minting failed: ${errorText}` },
-        { status: response.status }
+        { error: "Voice session token could not be created. Please try again." },
+        { status: Math.min(500, Math.max(400, response.status)) }
       );
     }
 

@@ -8,8 +8,25 @@ import {
   VOICE_AGENT_WS_URL,
   MEDSYNC_SYSTEM_PROMPT,
   MEDSYNC_TOOLS,
+  TOOL_ENDPOINTS,
   VOICE_CONFIG,
 } from "@/lib/assemblyai";
+
+// Adapter for AssemblyAI realtime transcript events. The documented payload
+// fields are `text` (full/partial transcript) and `delta` (incremental text),
+// NOT `transcript`.
+function eventText(msg: any): string | null {
+  if (msg.type === "transcript.user.delta" || msg.type === "transcript.user") {
+    return typeof msg.text === "string" ? msg.text : null;
+  }
+  if (msg.type === "transcript.agent.delta") {
+    return typeof msg.delta === "string" ? msg.delta : null;
+  }
+  if (msg.type === "transcript.agent") {
+    return typeof msg.text === "string" ? msg.text : null;
+  }
+  return null;
+}
 
 export interface MessageItem {
   id: string;
@@ -33,6 +50,7 @@ export function useVoiceAgent() {
 
   const wsRef = useRef<WebSocket | null>(null);
   const pendingToolResultsRef = useRef<Array<{ call_id: string; result: any }>>([]);
+  const replyInFlightRef = useRef<boolean>(false);
   const sessionStartTimeRef = useRef<number | null>(null);
   const sessionDurationRef = useRef<number>(0);
 
@@ -54,38 +72,70 @@ export function useVoiceAgent() {
     []
   );
 
-  const { startCapture, stopCapture, isCapturing, micVolume } = useAudioCapture({
+  const { startCapture, stopCapture, isCapturing, micVolume, error: micError } = useAudioCapture({
     onAudioChunk: handleAudioChunk,
   });
 
-  // Execute tool calls on Next.js backend API routes
-  const handleToolCall = async (callId: string, name: string, args: any) => {
-    try {
-      const endpoint = `/api/tools/${name.replace(/_/g, "-")}`;
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(args),
-      });
-
-      const data = await res.json();
-
-      if (name === "emergency_escalate" && data.escalated) {
-        setEmergencyAlert(data);
-      }
-
-      pendingToolResultsRef.current.push({
-        call_id: callId,
-        result: data,
-      });
-    } catch (err: any) {
-      console.error(`Tool execution error for ${name}:`, err);
-      pendingToolResultsRef.current.push({
-        call_id: callId,
-        result: { error: "Tool execution failed" },
-      });
+  // Send any queued tool results. A slow tool call can finish after reply.done
+  // has already fired; drain on completion as well as on reply.done so results
+  // are never stranded until the next turn.
+  const drainToolResults = useCallback(() => {
+    if (pendingToolResultsRef.current.length === 0) return;
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+    for (const toolRes of pendingToolResultsRef.current) {
+      wsRef.current.send(
+        JSON.stringify({
+          type: "tool.result",
+          call_id: toolRes.call_id,
+          result: JSON.stringify(toolRes.result),
+        })
+      );
     }
-  };
+    pendingToolResultsRef.current = [];
+  }, []);
+
+  // Execute tool calls on Next.js backend API routes
+  const handleToolCall = useCallback(
+    async (callId: string, name: string, args: any) => {
+      try {
+        const endpoint = TOOL_ENDPOINTS[name];
+        if (!endpoint) {
+          throw new Error(`Unregistered tool: ${name}`);
+        }
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(args),
+        });
+
+        const data = await res.json();
+
+        if (name === "emergency_escalate" && data.escalated) {
+          setEmergencyAlert(data);
+        }
+
+        pendingToolResultsRef.current.push({
+          call_id: callId,
+          result: data,
+        });
+
+        if (!replyInFlightRef.current) {
+          drainToolResults();
+        }
+      } catch (err: any) {
+        console.error(`Tool execution error for ${name}:`, err);
+        pendingToolResultsRef.current.push({
+          call_id: callId,
+          result: { error: "Tool execution failed" },
+        });
+        if (!replyInFlightRef.current) {
+          drainToolResults();
+        }
+      }
+    },
+    [drainToolResults]
+  );
 
   const connect = useCallback(async () => {
     try {
@@ -140,7 +190,11 @@ export function useVoiceAgent() {
               setSessionId(msg.session_id);
               sessionStartTimeRef.current = Date.now();
               // Start mic streaming once session is ready
-              await startCapture();
+              const captureResult = await startCapture();
+              if (!captureResult.ok) {
+                setError(captureResult.error || "Microphone access failed");
+                setConnectionStatus("error");
+              }
               break;
 
             case "input.speech.started":
@@ -153,28 +207,35 @@ export function useVoiceAgent() {
               setIsUserSpeaking(false);
               break;
 
-            case "transcript.user.delta":
-              setCurrentUserText((prev) => (msg.transcript ? msg.transcript : prev));
+            case "transcript.user.delta": {
+              const userDelta = eventText(msg);
+              if (userDelta !== null) {
+                setCurrentUserText(userDelta);
+              }
               break;
+            }
 
-            case "transcript.user":
-              if (msg.transcript) {
+            case "transcript.user": {
+              const userFinal = eventText(msg);
+              if (userFinal !== null) {
                 setTranscript((prev) => [
                   ...prev,
                   {
                     id: `msg-${Date.now()}-${Math.random()}`,
                     role: "user",
-                    text: msg.transcript,
+                    text: userFinal,
                     timestamp: new Date(),
                   },
                 ]);
                 setCurrentUserText("");
               }
               break;
+            }
 
             case "reply.started":
               setIsAgentSpeaking(true);
               setCurrentAgentText("");
+              replyInFlightRef.current = true;
               break;
 
             case "reply.audio":
@@ -184,46 +245,42 @@ export function useVoiceAgent() {
               }
               break;
 
-            case "transcript.agent.delta":
-              setCurrentAgentText((prev) => (msg.transcript ? msg.transcript : prev));
+            case "transcript.agent.delta": {
+              const agentDelta = eventText(msg);
+              if (agentDelta !== null) {
+                setCurrentAgentText((prev) => prev + agentDelta);
+              }
               break;
+            }
 
-            case "transcript.agent":
-              if (msg.transcript) {
+            case "transcript.agent": {
+              const agentFinal = eventText(msg);
+              if (agentFinal !== null) {
                 setTranscript((prev) => [
                   ...prev,
                   {
                     id: `msg-${Date.now()}-${Math.random()}`,
                     role: "agent",
-                    text: msg.transcript,
+                    text: agentFinal,
                     timestamp: new Date(),
                   },
                 ]);
                 setCurrentAgentText("");
               }
               break;
+            }
 
             case "reply.done":
               setIsAgentSpeaking(false);
+              replyInFlightRef.current = false;
 
               if (msg.status === "interrupted") {
                 // User interrupted: flush audio and discard pending tool results
                 flushAudio();
                 pendingToolResultsRef.current = [];
               } else {
-                // Drain tool results
-                if (pendingToolResultsRef.current.length > 0 && wsRef.current?.readyState === WebSocket.OPEN) {
-                  for (const toolRes of pendingToolResultsRef.current) {
-                    wsRef.current.send(
-                      JSON.stringify({
-                        type: "tool.result",
-                        call_id: toolRes.call_id,
-                        result: JSON.stringify(toolRes.result),
-                      })
-                    );
-                  }
-                  pendingToolResultsRef.current = [];
-                }
+                // Drain tool results for the completed reply
+                drainToolResults();
               }
               break;
 
@@ -266,7 +323,7 @@ export function useVoiceAgent() {
       setConnectionStatus("error");
       stopCapture();
     }
-  }, [queueAudio, flushAudio, startCapture, stopCapture]);
+  }, [queueAudio, flushAudio, startCapture, stopCapture, handleToolCall, drainToolResults]);
 
   const disconnect = useCallback(() => {
     if (sessionStartTimeRef.current) {
@@ -307,6 +364,7 @@ export function useVoiceAgent() {
     micVolume,
     emergencyAlert,
     error,
+    microphoneError: micError,
     sessionDuration: sessionDurationRef.current,
   };
 }

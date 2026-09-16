@@ -17,7 +17,7 @@ export function useAudioCapture({ onAudioChunk }: UseAudioCaptureOptions) {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number | null>(null);
 
-  const startCapture = useCallback(async () => {
+  const startCapture = useCallback(async (): Promise<{ ok: boolean; error?: string }> => {
     try {
       setError(null);
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -83,10 +83,13 @@ export function useAudioCapture({ onAudioChunk }: UseAudioCaptureOptions) {
       updateVolume();
 
       setIsCapturing(true);
+      return { ok: true };
     } catch (err: any) {
       console.error("Failed to start audio capture:", err);
-      setError(err.message || "Microphone access denied");
+      const message = err?.name === "NotAllowedError" ? "Microphone permission was denied" : err?.message || "Microphone access failed";
+      setError(message);
       setIsCapturing(false);
+      return { ok: false, error: message };
     }
   }, [onAudioChunk]);
 

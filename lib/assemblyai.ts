@@ -219,6 +219,20 @@ export const MEDSYNC_TOOLS = [
   }
 ];
 
+// Explicit allowlisted registry mapping each registered tool to its backend route.
+// Do not derive the endpoint from the tool name: `check_drug_interactions` maps to
+// `check-interactions`, and any tool without a handler must fail loudly.
+export const TOOL_ENDPOINTS: Record<string, string> = {
+  lookup_symptoms: "/api/tools/lookup-symptoms",
+  triage_severity: "/api/tools/triage-severity",
+  check_drug_interactions: "/api/tools/check-interactions",
+  get_medication_info: "/api/tools/get-medication-info",
+  log_health_entry: "/api/tools/log-health-entry",
+  get_health_history: "/api/tools/get-health-history",
+  schedule_reminder: "/api/tools/schedule-reminder",
+  emergency_escalate: "/api/tools/emergency-escalate",
+};
+
 export const VOICE_CONFIG = {
   voice: "anna",
   greeting: "Hi there! I'm MedSync, your health companion. How are you feeling today? Is there anything I can help you with?",
