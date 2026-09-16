@@ -1,8 +1,14 @@
+<div align="center">
+
+<img src="app/icon.svg" alt="MedSync AI" width="96" height="96" />
+
 # MedSync AI
 
 [![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-stone.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
+
+</div>
 
 MedSync AI is a voice-first health companion. It helps people describe symptoms, organize health notes, track medications, manage reminders, and view health patterns in a calm, grayscale clinical interface.
 
