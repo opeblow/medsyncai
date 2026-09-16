@@ -1,0 +1,143 @@
+{
+  "medications": [
+    {
+      "id": "ibuprofen",
+      "name": "Ibuprofen",
+      "brand_names": ["Advil", "Motrin", "Nurofen"],
+      "category": "NSAID (Nonsteroidal Anti-inflammatory Drug)",
+      "common_dosage": "200mg - 400mg every 4 to 6 hours as needed with food",
+      "max_daily_dosage": "1200mg (OTC) / 3200mg (under medical supervision)",
+      "side_effects": ["Stomach upset", "Nausea", "Heartburn", "Dizziness", "Mild headache"],
+      "warnings": [
+        "Take with food or milk to protect stomach lining",
+        "Avoid if you have active stomach ulcers, severe kidney disease, or bleeding disorders",
+        "Do not combine with other NSAIDs (aspirin, naproxen)"
+      ],
+      "interactions": ["aspirin", "warfarin", "lisinopril", "methotrexate", "prednisone"]
+    },
+    {
+      "id": "acetaminophen",
+      "name": "Acetaminophen",
+      "brand_names": ["Tylenol", "Panadol"],
+      "category": "Analgesic / Antipyretic",
+      "common_dosage": "325mg - 650mg every 4 to 6 hours or 1000mg every 6 hours",
+      "max_daily_dosage": "3000mg to 4000mg per 24 hours",
+      "side_effects": ["Rare at recommended doses", "Skin rash (uncommon)"],
+      "warnings": [
+        "Do not exceed maximum daily limit — severe liver injury risk",
+        "Avoid alcohol while taking acetaminophen",
+        "Check combination cold/flu medicines to avoid double dosing"
+      ],
+      "interactions": ["warfarin", "alcohol", "isoniazid"]
+    },
+    {
+      "id": "aspirin",
+      "name": "Aspirin",
+      "brand_names": ["Bayer", "Ecotrin", "Buffex"],
+      "category": "NSAID / Antiplatelet",
+      "common_dosage": "81mg daily (cardiac prophylaxis) or 325mg - 650mg every 4 hours for pain",
+      "max_daily_dosage": "4000mg",
+      "side_effects": ["Stomach irritation", "Easy bruising", "Heartburn"],
+      "warnings": [
+        "Do not give to children or teenagers recovering from chickenpox or flu (Reye's syndrome risk)",
+        "Increases risk of gastrointestinal bleeding"
+      ],
+      "interactions": ["ibuprofen", "warfarin", "clopidogrel", "methotrexate"]
+    },
+    {
+      "id": "lisinopril",
+      "name": "Lisinopril",
+      "brand_names": ["Prinivil", "Zestril"],
+      "category": "ACE Inhibitor",
+      "common_dosage": "10mg - 40mg once daily",
+      "max_daily_dosage": "80mg daily",
+      "side_effects": ["Dry persistent cough", "Dizziness", "Lightheadedness", "Headache"],
+      "warnings": [
+        "Do not take during pregnancy",
+        "Monitor potassium levels — avoid high potassium supplements"
+      ],
+      "interactions": ["ibuprofen", "spironolactone", "potassium_supplements", "lithium"]
+    },
+    {
+      "id": "amlodipine",
+      "name": "Amlodipine",
+      "brand_names": ["Norvasc"],
+      "category": "Calcium Channel Blocker",
+      "common_dosage": "5mg - 10mg once daily",
+      "max_daily_dosage": "10mg daily",
+      "side_effects": ["Swelling in ankles/feet (edema)", "Flushing", "Dizziness", "Fatigue"],
+      "warnings": [
+        "May cause low blood pressure when standing up quickly"
+      ],
+      "interactions": ["simvastatin", "diltiazem", "grapefruit_juice"]
+    },
+    {
+      "id": "metformin",
+      "name": "Metformin",
+      "brand_names": ["Glucophage", "Fortamet"],
+      "category": "Biguanide / Antidiabetic",
+      "common_dosage": "500mg - 1000mg twice daily with meals",
+      "max_daily_dosage": "2550mg daily",
+      "side_effects": ["Nausea", "Diarrhea", "Stomach cramps", "Metallic taste"],
+      "warnings": [
+        "Take with meals to minimize GI distress",
+        "Risk of lactic acidosis — report severe fatigue or muscle pain immediately"
+      ],
+      "interactions": ["contrast_dye", "alcohol", "cimetidine"]
+    },
+    {
+      "id": "sertraline",
+      "name": "Sertraline",
+      "brand_names": ["Zoloft"],
+      "category": "SSRI Antidepressant",
+      "common_dosage": "50mg - 100mg once daily in morning or evening",
+      "max_daily_dosage": "200mg daily",
+      "side_effects": ["Nausea", "Insomnia or drowsiness", "Dry mouth", "Sexual dysfunction"],
+      "warnings": [
+        "Do not stop abruptly — taper off with doctor supervision",
+        "Watch for increased suicidal thoughts when starting"
+      ],
+      "interactions": ["tramadol", "st_johns_wort", "monoamine_oxidase_inhibitors", "warfarin", "alprazolam"]
+    },
+    {
+      "id": "alprazolam",
+      "name": "Alprazolam",
+      "brand_names": ["Xanax"],
+      "category": "Benzodiazepine",
+      "common_dosage": "0.25mg - 0.5mg three times daily as needed",
+      "max_daily_dosage": "4mg daily",
+      "side_effects": ["Drowsiness", "Sedation", "Unsteadiness", "Memory impairment"],
+      "warnings": [
+        "High risk of dependence and tolerance",
+        "Never combine with alcohol or opioids — severe respiratory depression risk"
+      ],
+      "interactions": ["sertraline", "alcohol", "oxycodone", "ketoconazole"]
+    },
+    {
+      "id": "albuterol",
+      "name": "Albuterol",
+      "brand_names": ["ProAir", "Ventolin", "Proventil"],
+      "category": "Bronchodilator (Short-Acting Beta Agonist)",
+      "common_dosage": "1 - 2 puffs every 4 to 6 hours as needed for shortness of breath",
+      "max_daily_dosage": "12 puffs per 24 hours",
+      "side_effects": ["Shakiness/tremor", "Rapid heart rate (tachycardia)", "Nervousness"],
+      "warnings": [
+        "Seek emergency help if inhaler does not relieve breathing difficulty"
+      ],
+      "interactions": ["propranolol", "atenolol", "digoxin"]
+    },
+    {
+      "id": "omeprazole",
+      "name": "Omeprazole",
+      "brand_names": ["Prilosec"],
+      "category": "Proton Pump Inhibitor (PPI)",
+      "common_dosage": "20mg once daily before breakfast",
+      "max_daily_dosage": "40mg daily",
+      "side_effects": ["Headache", "Abdominal pain", "Nausea", "Gas"],
+      "warnings": [
+        "Long-term use may lower vitamin B12 and magnesium levels"
+      ],
+      "interactions": ["clopidogrel", "methotrexate", "ketoconazole"]
+    }
+  ]
+}
