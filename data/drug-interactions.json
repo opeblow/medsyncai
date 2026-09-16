@@ -1,0 +1,60 @@
+{
+  "interactions": [
+    {
+      "drug_a": "ibuprofen",
+      "drug_b": "aspirin",
+      "severity": "moderate",
+      "description": "Taking ibuprofen with aspirin may reduce aspirin's cardioprotective effect and increase risk of stomach ulceration/bleeding.",
+      "recommendation": "Take immediate-release aspirin at least 30 minutes before or 8 hours after ibuprofen."
+    },
+    {
+      "drug_a": "ibuprofen",
+      "drug_b": "warfarin",
+      "severity": "severe",
+      "description": "Combining ibuprofen with blood thinners like warfarin significantly increases risk of internal bleeding.",
+      "recommendation": "Avoid this combination. Consult your healthcare provider for safe alternatives like acetaminophen."
+    },
+    {
+      "drug_a": "ibuprofen",
+      "drug_b": "lisinopril",
+      "severity": "moderate",
+      "description": "NSAIDs can decrease the blood pressure lowering effect of ACE inhibitors like lisinopril and impair kidney function.",
+      "recommendation": "Monitor blood pressure regularly. Stay well hydrated."
+    },
+    {
+      "drug_a": "sertraline",
+      "drug_b": "alprazolam",
+      "severity": "moderate",
+      "description": "Combined use may enhance central nervous system depression, leading to increased sedation, drowsiness, and slowed reaction time.",
+      "recommendation": "Use with caution. Do not drive or operate machinery until you know how this affects you."
+    },
+    {
+      "drug_a": "sertraline",
+      "drug_b": "tramadol",
+      "severity": "severe",
+      "description": "Co-administration increases the risk of Serotonin Syndrome (high fever, agitation, confusion, tremor, seizures).",
+      "recommendation": "Avoid concurrent use unless strictly monitored by a physician."
+    },
+    {
+      "drug_a": "acetaminophen",
+      "drug_b": "warfarin",
+      "severity": "moderate",
+      "description": "Chronic high-dose acetaminophen (over 2g/day for several days) can enhance warfarin's anticoagulant effect.",
+      "recommendation": "Use minimal effective doses of acetaminophen and monitor INR levels."
+    },
+    {
+      "drug_a": "alprazolam",
+      "drug_b": "alcohol",
+      "severity": "critical",
+      "description": "Alcohol severely amplifies the sedative effects of alprazolam, which can cause life-threatening respiratory depression.",
+      "recommendation": "Strictly avoid all alcohol consumption while taking benzodiazepines."
+    },
+    {
+      "drug_a": "omeprazole",
+      "drug_b": "clopidogrel",
+      "severity": "severe",
+      "description": "Omeprazole inhibits CYP2C19, reducing the conversion of clopidogrel to its active antiplatelet form.",
+      "recommendation": "Consider an alternative PPI like pantoprazole under medical guidance."
+    }
+  ]
+}
