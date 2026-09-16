@@ -23,7 +23,7 @@ MedSync AI is a voice-first health companion. It helps people describe symptoms,
 **Requirements:** Node.js 20 LTS or newer and an AssemblyAI API key.
 
 ```powershell
-git clone <your-repository-url>
+git clone https://github.com/opeblow/medsyncai.git
 cd medsyncai
 npm install
 Copy-Item .env.example .env.local
